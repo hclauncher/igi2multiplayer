@@ -54,7 +54,7 @@ export async function onRequestPost(context) {
       <!-- Header -->
       <div style="background:linear-gradient(135deg,#2b6df6,#00bfff);padding:35px 20px;text-align:center;color:#ffffff;">
         
-        <img src="https://igi2multiplayer.pages.dev/logo.webp" 
+        <img src="https://igi2multiplayer.pages.dev/logo.png" 
              alt="Homecoming Gaming"
              style="width:70px;margin-bottom:15px;display:block;margin-left:auto;margin-right:auto;">
 
@@ -115,4 +115,5 @@ export async function onRequestPost(context) {
     return new Response("Server error: " + err.message, { status: 500 });
   }
 }
+
 
