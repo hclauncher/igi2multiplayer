@@ -3,9 +3,25 @@ export async function onRequestPost(context) {
     const request = context.request;
     const data = await request.json();
 
-    if (!data.name || !data.email || !data.subject || !data.message) {
+    const token = data["cf-turnstile-response"];
+
+    if (!data.name || !data.email || !data.subject || !data.message || !token) {
       return new Response("Missing fields", { status: 400 });
     }
+
+    // ✅ Verify Turnstile
+    const verify = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `secret=${context.env.TURNSTILE_SECRET_KEY}&response=${token}`
+    });
+
+    const result = await verify.json();
+
+    if (!result.success) {
+      return new Response("Bot verification failed", { status: 400 });
+    }
+
 
     // 🔐 Basic HTML escape (security)
     const escapeHTML = (str) =>
@@ -115,5 +131,3 @@ export async function onRequestPost(context) {
     return new Response("Server error: " + err.message, { status: 500 });
   }
 }
-
-
