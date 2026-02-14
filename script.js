@@ -92,20 +92,30 @@ if (firstFaq) {
 }
 
 // =============================
-// Contact Form (Cloudflare + Brevo)
+// Contact Form (Cloudflare + Brevo + Turnstile)
 // =============================
 const contactForm = document.querySelector('.contact-form');
 const formPopup = document.getElementById('form-popup');
 
 if (contactForm && formPopup) {
+
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const submitBtn = contactForm.querySelector("button");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Sending...";
+
+    // ✅ Safely get Turnstile token
+    const turnstileField = document.querySelector('[name="cf-turnstile-response"]');
+    const token = turnstileField ? turnstileField.value : "";
 
     const data = {
       name: contactForm.name.value.trim(),
       email: contactForm.email.value.trim(),
       subject: contactForm.subject.value.trim(),
-      message: contactForm.message.value.trim()
+      message: contactForm.message.value.trim(),
+      "cf-turnstile-response": token
     };
 
     try {
@@ -121,8 +131,14 @@ if (contactForm && formPopup) {
         formPopup.textContent = "Message Sent! Thank you for contacting us. We will reach out shortly.";
         formPopup.classList.add('show');
         contactForm.reset();
+
+        // Reset Turnstile widget (if available)
+        if (window.turnstile) {
+          turnstile.reset();
+        }
+
       } else {
-        formPopup.textContent = "Failed to send message. Please try again.";
+        formPopup.textContent = "Failed to send message. Please verify captcha and try again.";
         formPopup.classList.add('show');
       }
 
@@ -131,9 +147,17 @@ if (contactForm && formPopup) {
       formPopup.classList.add('show');
     }
 
-    setTimeout(() => formPopup.classList.remove('show'), 4000);
+    // Restore button
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+
+    setTimeout(() => {
+      formPopup.classList.remove('show');
+    }, 4000);
+
   });
 }
+
 
 // Open new tab for all download links//
 document.addEventListener("DOMContentLoaded", function() {
