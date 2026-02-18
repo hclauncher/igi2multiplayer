@@ -588,11 +588,15 @@ footer i {
 .project-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
+
   align-items: flex-start;
   gap: 40px;
   max-width: 1100px;
   margin: 0 auto;
+}
+.project-left {
+  flex: 0 0 480px;   /* same as image max-width */
 }
 
 .project-image img {
@@ -637,6 +641,83 @@ footer i {
   margin-bottom: 10px;
   font-size: 1.4em;
   text-shadow: 0 0 8px #00ffff;
+}
+/* ------------------------------
+   PROJECT DOWNLOAD BUTTON
+--------------------------------*/
+.project-image {
+  text-align: center;
+}
+.project-download-btn img {
+	width: 24px;
+	height: 24px;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+.project-download-btn {
+  display: inline-flex;      /* keep icon + text on same line */
+  align-items: center;       /* vertically center icon & text */
+  gap: 8px;                  /* space between icon and text */
+  margin-top: 20px;
+  padding: 12px 28px;
+  font-size: 1.05em;
+  font-weight: bold;
+  color: #0a0a0a;
+  background: var(--neon-color);
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: var(--box-shadow-light);
+  transition: all 0.3s ease;
+  text-shadow: none;
+}
+
+
+.project-download-btn i {
+  margin-right: 8px;
+}
+
+.project-download-btn:hover {
+  transform: scale(1.05);
+  box-shadow: var(--box-shadow-hover);
+}
+.version-info {
+  margin-top: 12px;       /* adds space between button and version text */
+  color: #00ffffcc;
+  font-size: 0.95em;
+}
+/* =============================
+   Image Preview Overlay (Lightbox)
+============================= */
+#image-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85); /* dark semi-transparent background */
+  display: none;                 /* hidden by default */
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;                /* above everything else */
+  cursor: zoom-out;
+  transition: opacity 0.3s ease;
+}
+
+#image-preview-overlay img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 30px #00ffff, 0 0 60px #00ffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#image-preview-overlay img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 40px #00ffff, 0 0 80px #00ffff;
+}
+
+#image-preview-overlay:active {
+  cursor: zoom-out;
 }
 
 /* ------------------------------
@@ -1563,6 +1644,7 @@ html {
 .igi2map-text,
 .hclauncher-text,
 .hccommander-text,
+.hcban-text,
 .contact-text,
 .about-text,
 .faq-text {
@@ -1583,6 +1665,7 @@ html {
 .igi2map-text h2,
 .hclauncher-text h2,
 .hccommander-text h2,
+.hcban-text h2,
 .contact-text h2,
 .about-text h2,
 .faq-text h2 {
@@ -1599,6 +1682,7 @@ html {
 .igi2map-text p,
 .hclauncher-text p,
 .hccommander-text p,
+.hcban-text p,
 .contact-text p,
 .about-text p,
 .faq-text p {
@@ -1612,6 +1696,7 @@ html {
 .igi2map-text a,
 .hclauncher-text a,
 .hccommander-text a,
+.hcban-text a,
 .contact-text a,
 .about-text a,
 .faq-text a {
@@ -1626,6 +1711,7 @@ html {
 .igi2map-text a:hover,
 .hclauncher-text a:hover,
 .hccommander-text a:hover,
+.hcban-text a:hover,
 .contact-text a:hover,
 .about-text a:hover,
 .faq-text a:hover {
@@ -1802,4 +1888,72 @@ html {
     flex-wrap: wrap;
     justify-content: center;
   }
+}
+
+/* ------------------------------
+   Changelog (Neon Theme)
+--------------------------------*/
+.changelog {
+  position: relative;
+  padding: 60px 20px;
+  text-align: center;
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff90;
+  background: rgba(0, 0, 0, 0.6);
+  border-top: 1px solid #00ffff30;
+  border-bottom: 1px solid #00ffff30;
+  box-shadow: 0 0 30px #00ffff20 inset;
+  overflow: hidden;
+  margin-top: 60px; /* Added spacing above */
+}
+
+.changelog h2 {
+  font-size: clamp(1.8em, 3vw, 2.4em);
+  color: #00ffff;
+  text-shadow: 0 0 15px #00ffff;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.changelog p {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #00ffffcc;
+  text-shadow: 0 0 8px #00ffff40;
+  position: relative;
+  z-index: 1;
+}
+
+.changelog .update-list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 700px;
+  text-align: left;
+  position: relative;
+  z-index: 1;
+}
+
+.changelog .update-list li {
+  margin: 12px 0;
+  line-height: 1.6;
+  color: #00ffffcc;
+  text-shadow: 0 0 6px #00ffff40;
+  transition: 0.3s ease;
+  font-size: 1.05em;
+}
+
+.changelog .update-list li i {
+  margin-right: 10px;
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffff80;
+}
+
+.changelog .update-list li:hover {
+  color: #00ffff;
+  text-shadow: 0 0 12px #00ffff;
+  transform: translateX(4px);
 }

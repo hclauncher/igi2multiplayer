@@ -168,16 +168,22 @@ document.addEventListener("DOMContentLoaded", function() {
     link.setAttribute('rel', 'noopener noreferrer');
   });
 });
-// Dynamic copyright year//
+// Dynamic copyright year
 document.addEventListener("DOMContentLoaded", () => {
   const startYear = 2015;
   const currentYear = new Date().getFullYear();
-  const yearText = currentYear > startYear ? `${startYear} - ${currentYear}` : startYear;
+
+  const yearText = currentYear > startYear
+    ? `${startYear}–${currentYear}`
+    : `${startYear}`;
+
   const footer = document.getElementById("footer-text");
+
   if (footer) {
-    footer.innerHTML = `${yearText} © Homecoming Gaming – All rights reserved`;
+    footer.innerHTML = `© ${yearText} Homecoming Gaming. All rights reserved.`;
   }
 });
+
 /* ------------------------------
    COOKIE BANNER
 --------------------------------*/
@@ -199,4 +205,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   acceptBtn.addEventListener("click", () => handleChoice("accepted"));
   declineBtn.addEventListener("click", () => handleChoice("declined"));
+});
+// =============================
+// Image Preview Overlay (Lightbox)
+// =============================
+document.addEventListener("DOMContentLoaded", function () {
+
+  const overlay = document.createElement('div');
+  overlay.id = 'image-preview-overlay';
+  overlay.innerHTML = '<img src="" alt="Preview">';
+  document.body.appendChild(overlay);
+
+  const overlayImg = overlay.querySelector('img');
+
+  document.querySelectorAll('.preview-img').forEach(img => {
+    img.addEventListener('click', function () {
+      overlayImg.src = img.dataset.full || img.src;
+      overlay.style.display = 'flex';
+    });
+  });
+
+  overlay.addEventListener('click', function (e) {
+    if (e.target !== overlayImg) {
+      overlay.style.display = 'none';
+      overlayImg.src = '';
+    }
+  });
+
 });

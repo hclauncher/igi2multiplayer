@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>HcCommandDeR Demo | Homecoming Gaming</title>
+<title>HcBan Demo | Homecoming Gaming</title>
 
 <style>
 body{
@@ -224,9 +224,31 @@ tr.selected{
 /* BOTTOM */
 .bottom-bar{
   border-top:1px solid #7a7a7a;
-  padding:5px 10px;
-  
+  padding:5px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:12px;
 }
+
+/* Left */
+.bottom-left{
+  text-align:left;
+}
+
+/* Center */
+.bottom-center{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+}
+
+/* Right */
+.bottom-right{
+  text-align:right;
+}
+
 /* WINDOW TITLE BAR */
 .window-title{
   background:linear-gradient(to bottom, #0a246a, #3a6ea5);
@@ -249,6 +271,90 @@ tr.selected{
   padding:0;              /* 🔥 IMPORTANT */
   box-sizing:border-box;  /* 🔥 IMPORTANT */
 }
+/* ===== HCBAN WINDOW ===== */
+.hcban-window{
+  position:absolute;
+  width:500px;
+  height:300px;
+  background:#dcdcdc;
+  border:2px solid #000080;
+  box-shadow:3px 3px 10px rgba(0,0,0,0.4);
+  top:150px;
+  left:300px;
+  display:flex;
+  flex-direction:column;
+}
+
+.hcban-content{
+  padding:10px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.hcban-header{
+  margin-bottom:8px;
+}
+
+.hcban-log{
+  flex:1;
+  border:1px solid #7a7a7a;
+  background:white;
+  padding:6px;
+  font-family:Consolas;
+  font-size:12px;
+  overflow:auto;
+}
+<!-- hcban close button-->
+.hcban-close-btn{
+  width:22px;
+  height:20px;
+  font-size:12px;
+  font-weight:bold;
+  border:1px solid #000;
+  background:#c0c0c0;
+  cursor:pointer;
+  padding:0;
+}
+
+.hcban-close-btn:hover{
+  background:#ff4d4d;
+  color:white;
+}
+/* HCBAN BOTTOM BAR */
+.hcban-bottom{
+  border-top:1px solid #7a7a7a;
+  padding:5px 10px;
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  background:#e6e6e6;
+}
+
+.hcban-bottom-left{
+  text-align:left;
+}
+
+.hcban-bottom-right{
+  text-align:right;
+}
+/* MAIN WINDOW CLOSE BUTTON */
+.main-close-btn{
+  width:22px;
+  height:20px;
+  font-size:12px;
+  font-weight:bold;
+  border:1px solid #000;
+  background:#c0c0c0;
+  cursor:pointer;
+  padding:0;
+}
+
+.main-close-btn:hover{
+  background:#ff4d4d;
+  color:white;
+}
+
 
 </style>
 </head>
@@ -264,7 +370,7 @@ tr.selected{
 
   <div style="padding:15px;">
     <b>Enter IP Address Here..</b><br><br>
-    <input type="text" id="ip" value="0.0.0.0">
+    <input type="text" id="ip" value="192.168.1.110">
 
     <div class="popup-buttons">
       <button onclick="next1()">OK</button>
@@ -315,9 +421,11 @@ tr.selected{
 
 <!-- MAIN WINDOW -->
 <div id="main" class="main-window">
-<div class="window-title">
-  HcCommader - IGI-2 Server Controller
+<div class="window-title" style="display:flex; justify-content:space-between; align-items:center;">
+  <span>HcCommader - IGI-2 Server Controller</span>
+  <button class="main-close-btn" onclick="closeMain()">X</button>
 </div>
+
 
 <div class="top-bar">
   <div><b>Name :</b> IGI-2 HOMECOMING</div>
@@ -340,6 +448,47 @@ tr.selected{
   <div class="tab" onclick="switchTab('settingsTab',this)">Settings</div>
   <div class="tab" onclick="switchTab('toolsTab',this)">Tools</div>
 </div>
+<!-- HcBan WINDOW -->
+<div id="hcbanWindow" class="hcban-window" style="display:none;">
+
+  <!-- TITLE -->
+  <div class="window-title" style="display:flex; justify-content:space-between; align-items:center;">
+    <span>HcBaN</span>
+    <button class="hcban-close-btn" onclick="hideHcBan()">X</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="hcban-content">
+
+    <div class="hcban-header">
+      <b>HcBaN By Homecoming 2025</b>
+      <span style="float:right;">v1.0</span>
+    </div>
+
+    <div class="hcban-log" id="hcbanLog">
+      [15:26][17.02.26] Autoban starting....<br>
+      [15:26][17.02.26] Detection crasher is running....
+    </div>
+
+    <div style="text-align:right; margin-top:8px;">
+      <button onclick="closeHcBan()">Clear</button>
+    </div>
+
+  </div>
+
+  <!-- ✅ BOTTOM STATUS BAR (NOW CORRECT POSITION) -->
+  <div class="hcban-bottom">
+    <div class="hcban-bottom-left">
+      Product Version : v1.0.0.0
+    </div>
+
+    <div class="hcban-bottom-right">
+      Created By : SNIPER
+    </div>
+  </div>
+
+</div>
+
 
 <!-- MAIN TAB -->
 <div id="mainTab" class="tab-content active">
@@ -424,20 +573,43 @@ tr.selected{
       <button>Player Finder</button>
       <button>Announce Sender</button>
       <button>Unban Players</button>
-      <button>HcBan</button>
+      <button onclick="openHcBan()">HcBan</button>
+
     </div>
   </div>
 </div>
 
 <div class="bottom-bar">
-  Uptime : 42:11:26 &nbsp;&nbsp; Product : v1.0.0.0 &nbsp;&nbsp; Remaining Items : 183 &nbsp;&nbsp; Created By : SNIPER
+  <div class="bottom-left">
+    Uptime : 42:11:26
+  </div>
+
+  <div class="bottom-center">
+    Product : v1.0.0.0 &nbsp;&nbsp; | &nbsp;&nbsp; Remaining Items : 183
+  </div>
+
+  <div class="bottom-right">
+    Created By : SNIPER
+  </div>
 </div>
+
 
 </div>
 
 <script>
-function next1(){ popup1.style.display="none"; popup2.style.display="block"; }
-function next2(){ popup2.style.display="none"; popup3.style.display="block"; }
+
+let hcbanTimer = null;   // global timer
+
+function next1(){ 
+  popup1.style.display="none"; 
+  popup2.style.display="block"; 
+}
+
+function next2(){ 
+  popup2.style.display="none"; 
+  popup3.style.display="block"; 
+}
+
 function finish(){
   var ipValue=document.getElementById("ip").value;
   var portValue=document.getElementById("port").value;
@@ -447,7 +619,9 @@ function finish(){
   loadFakePlayers();
 }
 
-function cancel(){ alert("Connection Cancelled"); }
+function cancel(){ 
+  alert("Connection Cancelled"); 
+}
 
 function loadFakePlayers(){
   let players=[
@@ -460,9 +634,12 @@ function loadFakePlayers(){
 	["LinuxMan","IGI",32,"49.18.112.32",80],
     ["Shadow","CONS",40,"48.85.28.8",20]
   ];
+
   let body1=document.querySelector("#table1 tbody");
   let body2=document.querySelector("#table2 tbody");
-  body1.innerHTML=""; body2.innerHTML="";
+  body1.innerHTML=""; 
+  body2.innerHTML="";
+
   let igi=players.filter(p=>p[1]=="IGI");
   let cons=players.filter(p=>p[1]=="CONS");
 
@@ -492,6 +669,7 @@ function loadFakePlayers(){
 
   body2.appendChild(r);
 }
+
 }
 
 function selectRow(row){
@@ -505,6 +683,82 @@ function switchTab(id,el){
   el.classList.add("active");
   document.getElementById(id).classList.add("active");
 }
+
+/* =========================
+   HCBAN SYSTEM
+========================= */
+
+function openHcBan(){
+  let win = document.getElementById("hcbanWindow");
+  win.style.display="flex";
+  startHcBan();
+}
+
+function startHcBan(){
+
+  let log = document.getElementById("hcbanLog");
+
+  // Reset log
+  log.innerHTML = "[15:26][17.02.26] Autoban starting....<br>" +
+                  "[15:26][17.02.26] Detection crasher is running....";
+
+  // Stop old timer if exists
+  if(hcbanTimer){
+    clearTimeout(hcbanTimer);
+  }
+
+  hcbanTimer = setTimeout(function(){
+
+    let now = new Date();
+    let time = now.getHours().toString().padStart(2,'0') + ":" +
+               now.getMinutes().toString().padStart(2,'0');
+
+    let date = now.getDate().toString().padStart(2,'0') + "." +
+               (now.getMonth()+1).toString().padStart(2,'0') + "." +
+               now.getFullYear().toString().slice(-2);
+
+    log.innerHTML += "<br>["+time+"]["+date+"] Found crasher: 223.184.147.31 - Invalid signature";
+    log.innerHTML += "<br>["+time+"]["+date+"] HcBan: (223.184.147.31) has been banned in Windows Firewall.";
+
+    log.scrollTop = log.scrollHeight;
+
+  }, 2000);
+}
+
+function closeHcBan(){
+
+  // Stop timer
+  if(hcbanTimer){
+    clearTimeout(hcbanTimer);
+    hcbanTimer = null;
+  }
+
+  // Clear log
+  document.getElementById("hcbanLog").innerHTML="";
+
+  // Restart automatically
+  startHcBan();
+}
+function hideHcBan(){
+
+  // Stop timer
+  if(hcbanTimer){
+    clearTimeout(hcbanTimer);
+    hcbanTimer = null;
+  }
+
+  // Hide window
+  document.getElementById("hcbanWindow").style.display="none";
+}
+
+function closeMain(){
+  if(confirm("Are you sure you want to close HcCommander?")){
+    document.getElementById("main").style.display = "none";
+    document.getElementById("popup1").style.display = "block";
+  }
+}
+
+
 </script>
 
 </body>

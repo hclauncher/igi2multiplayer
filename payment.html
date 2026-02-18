@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HcCommanDeR - Payment</title>
+ <!-- Favicon -->
+  <link rel="icon" href="logo.webp" type="image/webp">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #000;
+  color: #00ffff;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 30px 20px;
+  box-sizing: border-box;
+}
+
+.payment-container {
+  background: rgba(0,0,0,0.95);
+  border: 1px solid #00ffff50;
+  box-shadow: 0 0 40px #00ffff30;
+  border-radius: 15px;
+  padding: 35px;
+  width: 100%;
+  max-width: 950px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  text-shadow: 0 0 15px #00ffff;
+  margin-bottom: 10px;
+}
+
+.price {
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  margin: 10px 0 5px;
+}
+
+.no-refund {
+  text-align: center;
+  font-size: 0.85em;
+  color: #00ffffaa;
+  margin-bottom: 15px;
+}
+
+.product-select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #00ffff50;
+  background: #050505;
+  color: #00ffff;
+}
+
+.payment-content {
+  display: flex;
+  gap: 40px;
+  margin-top: 5px;
+  align-items: flex-start;
+}
+
+.left-side {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-box img {
+  width: 220px;
+  border-radius: 10px;
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 20px #00ffff50;
+}
+
+.upi-id {
+  margin-top: 15px;
+  font-size: 1.2em;
+  background: #0a0a0a;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #00ffff50;
+}
+
+.copy-btn {
+  margin-top: 10px;
+  padding: 8px 15px;
+  background: #00ffff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.instructions {
+  margin-top: 15px;
+  font-size: 0.95em;
+  color: #00ffffcc;
+}
+
+.right-side {
+  flex: 1;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="file"],
+input[type="number"] {
+  background: #050505;
+  border: 1px solid #00ffff50;
+  color: #00ffff;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.submit-btn {
+  padding: 12px;
+  background: #00ffff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+.note {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #00ffffaa;
+}
+
+.agreement-box {
+  margin-bottom: 15px;
+  font-size: 0.9em;
+}
+
+.agreement-box a {
+  color: #00ffff;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .payment-content {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="payment-container">
+
+  <h1 id="productTitle"><i class="fas fa-bolt"></i> HcCommandeR</h1>
+  <div class="price" id="priceText">₹299</div>
+  <div class="no-refund">
+    Digital product. All payments are final and non-refundable.
+  </div>
+
+  <select class="product-select" id="productSelect">
+    <option value="commander">HcCommandeR - ₹299</option>
+    <option value="hcban">HcBan - ₹250</option>
+    <option value="donate">Donate</option>
+  </select>
+
+  <div class="payment-content">
+
+    <div class="left-side">
+      <div class="qr-box">
+        <img src="images/upi.png" alt="UPI QR Code">
+      </div>
+
+      <div class="upi-id">
+        UPI ID: <strong id="upiText">8116542482@apl</strong><br>
+        <button type="button" class="copy-btn" onclick="copyUPI()">Copy UPI ID</button>
+      </div>
+
+      <div class="instructions">
+        🇮🇳 Scan QR → Pay → Upload screenshot<br>
+        Fake or invalid payments will result in permanent blacklist.
+      </div>
+    </div>
+
+    <div class="right-side">
+      <form id="upiForm" enctype="multipart/form-data">
+
+        
+        <input type="hidden" name="product" id="selectedProduct" value="HcCommandeR">
+
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <input type="text" name="txn" placeholder="Transaction ID" required>
+        <input type="file" name="screenshot" accept="image/*" required>
+
+        <!-- AGREEMENT CHECKBOX -->
+        <div class="agreement-box">
+          <label>
+            <input type="checkbox" id="agreeCheck" required>
+            I agree to the 
+            <a href="agreement.html" target="_blank">
+              Software License & Sales Agreement
+            </a>
+            and understand that all payments are final and non-refundable.
+          </label>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          Submit Payment
+        </button>
+
+        <p id="statusMessage"></p>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="note">
+    After verification, you will receive the download link within 10–30 minutes via your email.
+  </div>
+
+</div>
+
+<script>
+const select = document.getElementById("productSelect");
+const title = document.getElementById("productTitle");
+const priceText = document.getElementById("priceText");
+const donateInput = document.getElementById("donateAmount");
+const hiddenProduct = document.getElementById("selectedProduct");
+
+select.addEventListener("change", function() {
+
+  if (this.value === "commander") {
+    title.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
+    priceText.innerText = "₹299";
+    donateInput.style.display = "none";
+    hiddenProduct.value = "HcCommandeR";
+  }
+
+  if (this.value === "hcban") {
+    title.innerHTML = '<i class="fas fa-shield-alt"></i> HcBan';
+    priceText.innerText = "₹250";
+    donateInput.style.display = "none";
+    hiddenProduct.value = "HcBan";
+  }
+
+  if (this.value === "donate") {
+  title.innerHTML = '<i class="fas fa-heart"></i> Donate';
+  priceText.innerText = "Enter Amount";
+  hiddenProduct.value = "Donate";
+}
+
+});
+
+function copyUPI() {
+  const text = document.getElementById("upiText").innerText;
+  navigator.clipboard.writeText(text);
+  alert("UPI ID Copied!");
+}
+</script>
+
+</body>
+</html>
