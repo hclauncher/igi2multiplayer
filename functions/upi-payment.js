@@ -1,17 +1,64 @@
-export async function onRequestPost(context) { 
+export async function onRequestPost(context) {
   try {
     const formData = await context.request.formData();
 
     const name = formData.get("name");
     const email = formData.get("email");
     const txn = formData.get("txn");
-    const product = formData.get("product");  // <-- new line to get selected product
+    const product = formData.get("product");
     const file = formData.get("screenshot");
+    const token = formData.get("cf-turnstile-response"); // Turnstile token
 
-    if (!name || !email || !txn || !file || !product) {
+    // ===========================
+    // BASIC FIELD CHECK
+    // ===========================
+    if (!name || !email || !txn || !file || !product || !token) {
       return new Response("Missing fields", { status: 400 });
     }
 
+    // ===========================
+    // TURNSTILE VERIFICATION
+    // ===========================
+    const TURNSTILE_SECRET = context.env.TURNSTILE_SECRET_KEY;
+
+    if (!TURNSTILE_SECRET) {
+      return new Response("Turnstile secret not configured", { status: 500 });
+    }
+
+    const verifyResponse = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `secret=${TURNSTILE_SECRET}&response=${token}`
+      }
+    );
+
+    const verifyData = await verifyResponse.json();
+
+    if (!verifyData.success) {
+      return new Response("Captcha verification failed", { status: 403 });
+    }
+
+    // ===========================
+    // FILE VALIDATION (SERVER)
+    // ===========================
+    const allowedTypes = ["image/jpeg", "image/png"];
+    const maxSize = 1 * 1024 * 1024; // 1MB
+
+    if (!allowedTypes.includes(file.type)) {
+      return new Response("Only JPG and PNG images are allowed", { status: 400 });
+    }
+
+    if (file.size > maxSize) {
+      return new Response("File size exceeds 1MB limit", { status: 400 });
+    }
+
+    // ===========================
+    // FILE CONVERSION
+    // ===========================
     const arrayBuffer = await file.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
 
@@ -22,6 +69,9 @@ export async function onRequestPost(context) {
 
     const base64File = btoa(binary);
 
+    // ===========================
+    // EMAIL CONFIG
+    // ===========================
     const BREVO_API_KEY = context.env.BREVO_API_KEY;
 
     if (!BREVO_API_KEY) {
@@ -42,12 +92,12 @@ export async function onRequestPost(context) {
         to: [{
           email: "igi2.homecoming@gmail.com"
         }],
-        subject: `New UPI Payment - ${product}`,  // include product in subject
+        subject: `New UPI Payment - ${product}`,
         htmlContent: `
           <h3>New UPI Payment</h3>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Tools:</strong> ${product}</p>  <!-- include selected product -->
+          <p><strong>Tools:</strong> ${product}</p>
           <p><strong>Transaction ID:</strong> ${txn}</p>
         `,
         attachment: [{
