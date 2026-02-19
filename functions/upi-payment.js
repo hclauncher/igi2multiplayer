@@ -1,13 +1,14 @@
-export async function onRequestPost(context) {
+export async function onRequestPost(context) { 
   try {
     const formData = await context.request.formData();
 
     const name = formData.get("name");
     const email = formData.get("email");
     const txn = formData.get("txn");
+    const product = formData.get("product");  // <-- new line to get selected product
     const file = formData.get("screenshot");
 
-    if (!name || !email || !txn || !file) {
+    if (!name || !email || !txn || !file || !product) {
       return new Response("Missing fields", { status: 400 });
     }
 
@@ -41,11 +42,12 @@ export async function onRequestPost(context) {
         to: [{
           email: "igi2.homecoming@gmail.com"
         }],
-        subject: "New UPI Payment Screenshot",
+        subject: `New UPI Payment - ${product}`,  // include product in subject
         htmlContent: `
           <h3>New UPI Payment</h3>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Tools:</strong> ${product}</p>  <!-- include selected product -->
           <p><strong>Transaction ID:</strong> ${txn}</p>
         `,
         attachment: [{
