@@ -1,7 +1,6 @@
 export async function onRequestPost(context) {
   try {
-    const request = context.request;
-    const formData = await request.formData();
+    const formData = await context.request.formData();
 
     const name = formData.get("name");
     const email = formData.get("email");
@@ -13,11 +12,13 @@ export async function onRequestPost(context) {
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const base64File = btoa(
-      String.fromCharCode(...new Uint8Array(arrayBuffer))
-    );
+    const base64File = Buffer.from(arrayBuffer).toString("base64");
 
     const BREVO_API_KEY = context.env.BREVO_API_KEY;
+
+    if (!BREVO_API_KEY) {
+      return new Response("BREVO_API_KEY not set", { status: 500 });
+    }
 
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -47,8 +48,11 @@ export async function onRequestPost(context) {
       })
     });
 
+    const result = await response.text();
+    console.log("Brevo response:", result);
+
     if (!response.ok) {
-      return new Response("Email failed", { status: 500 });
+      return new Response("Email failed: " + result, { status: 500 });
     }
 
     return new Response("Success", { status: 200 });
