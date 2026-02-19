@@ -3,104 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HcCommanDeR - Payment</title>
+<title>UPI Payment - Homecoming Gaming</title>
 
-<link rel="icon" href="logo.webp" type="image/webp">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #000;
-  color: #00ffff;
+  background: linear-gradient(135deg, #000428, #004e92);
+  color: white;
   display: flex;
   justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  padding: 30px 20px;
-  box-sizing: border-box;
 }
 
-.payment-container {
-  background: rgba(0,0,0,0.95);
-  border: 1px solid #00ffff50;
-  box-shadow: 0 0 40px #00ffff30;
+.container {
+  background: rgba(0,0,0,0.8);
+  padding: 30px;
   border-radius: 15px;
-  padding: 35px;
   width: 100%;
-  max-width: 950px;
-  margin: auto;
+  max-width: 450px;
+  box-shadow: 0 0 25px #00ffff;
 }
 
-h1 {
+h2 {
   text-align: center;
-  text-shadow: 0 0 15px #00ffff;
+  margin-bottom: 10px;
 }
 
 .price {
   text-align: center;
-  font-size: 2em;
-  font-weight: bold;
-  margin: 10px 0 5px;
-}
-
-.no-refund {
-  text-align: center;
-  font-size: 0.85em;
-  color: #00ffffaa;
-  margin-bottom: 15px;
-}
-
-.product-select {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #00ffff50;
-  background: #050505;
+  font-size: 18px;
+  margin-bottom: 20px;
   color: #00ffff;
 }
 
-.payment-content {
-  display: flex;
-  gap: 40px;
-  margin-top: 5px;
-}
-
-.left-side, .right-side {
-  flex: 1;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="file"] {
-  background: #050505;
-  border: 1px solid #00ffff50;
-  color: #00ffff;
-  padding: 12px;
-  border-radius: 8px;
+select, input {
   width: 100%;
+  padding: 10px;
   margin-bottom: 15px;
-  box-sizing: border-box;
+  border-radius: 6px;
+  border: none;
 }
 
 .submit-btn {
+  width: 100%;
   padding: 12px;
   background: #00ffff;
-  color: #000;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-  width: 100%;
 }
 
 .submit-btn:disabled {
-  opacity: 0.6;
+  background: gray;
   cursor: not-allowed;
 }
 
-/* POPUP (same system as contact page) */
+.upi-box {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.upi-box button {
+  padding: 6px 12px;
+  background: #00ffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ===== POPUP ===== */
 #form-popup {
   display: none;
   position: fixed;
@@ -127,77 +104,77 @@ input[type="file"] {
   90% { opacity: 1; }
   100% { opacity: 0; transform: translateY(20px); }
 }
-
-@media (max-width: 768px) {
-  .payment-content {
-    flex-direction: column;
-  }
-}
 </style>
 </head>
 
 <body>
 
-<div class="payment-container">
+<div class="container">
 
-<h1 id="productTitle"><i class="fas fa-bolt"></i> HcCommandeR</h1>
+<h2 id="productTitle"><i class="fas fa-bolt"></i> HcCommandeR</h2>
 <div class="price" id="priceText">₹299</div>
 
-<select class="product-select" id="productSelect">
-<option value="commander">HcCommandeR - ₹299</option>
-<option value="hcban">HcBan - ₹250</option>
-<option value="donate">Donate</option>
+<select id="productSelect">
+  <option value="commander">HcCommandeR - ₹299</option>
+  <option value="hcban">HcBan - ₹250</option>
+  <option value="donate">Donate</option>
 </select>
 
-<div class="payment-content">
-
-<div class="left-side">
-<img src="images/upi.png" width="220">
+<div class="upi-box">
+  <p id="upiText">igi2.homecoming@upi</p>
+  <button onclick="copyUPI()">Copy UPI</button>
 </div>
 
-<div class="right-side">
 <form id="upiForm" enctype="multipart/form-data">
-<input type="hidden" name="product" id="selectedProduct" value="HcCommandeR - ₹299">
-<input type="text" name="name" placeholder="Your Name" required>
-<input type="email" name="email" placeholder="Your Email" required>
-<input type="text" name="txn" placeholder="Transaction ID" required>
-<input type="file" name="screenshot" accept="image/*" required>
-<button type="submit" class="submit-btn">Submit Payment</button>
+  <input type="hidden" name="product" id="selectedProduct" value="HcCommandeR - ₹299">
+
+  <input type="text" name="name" placeholder="Your Name" required>
+  <input type="text" name="transactionId" placeholder="Transaction ID" required>
+  <input type="file" name="screenshot" accept="image/*" required>
+
+  <button type="submit" class="submit-btn">Submit Payment</button>
 </form>
-</div>
 
 </div>
-</div>
 
-<!-- POPUP -->
+<!-- Popup -->
 <div id="form-popup"></div>
 
 <script>
-// Product switch
 const select = document.getElementById("productSelect");
 const title = document.getElementById("productTitle");
 const priceText = document.getElementById("priceText");
 const hiddenProduct = document.getElementById("selectedProduct");
 
 select.addEventListener("change", function() {
+
   if (this.value === "commander") {
     title.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
     priceText.innerText = "₹299";
     hiddenProduct.value = "HcCommandeR - ₹299";
   }
+
   if (this.value === "hcban") {
     title.innerHTML = '<i class="fas fa-shield-alt"></i> HcBan';
     priceText.innerText = "₹250";
     hiddenProduct.value = "HcBan - ₹250";
   }
+
   if (this.value === "donate") {
     title.innerHTML = '<i class="fas fa-heart"></i> Donate';
-    priceText.innerText = "Custom Amount";
+    priceText.innerText = "Enter Amount";
     hiddenProduct.value = "Donate";
   }
+
 });
 
-// FORM SUBMIT (same behavior as contact page)
+function copyUPI() {
+  const text = document.getElementById("upiText").innerText;
+  navigator.clipboard.writeText(text);
+  alert("UPI ID Copied!");
+}
+
+/* ===== FORM SUBMIT ===== */
 const form = document.getElementById("upiForm");
 const popup = document.getElementById("form-popup");
 const submitBtn = document.querySelector(".submit-btn");
