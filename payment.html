@@ -199,7 +199,11 @@ input[type="number"] {
     </div>
 
     <div class="right-side">
-      <form id="upiForm" enctype="multipart/form-data">
+      <form id="upiForm"
+      method="POST"
+      action="/upi-payment"
+      enctype="multipart/form-data">
+
 
         
         <input type="hidden" name="product" id="selectedProduct" value="HcCommandeR">
@@ -241,7 +245,6 @@ input[type="number"] {
 const select = document.getElementById("productSelect");
 const title = document.getElementById("productTitle");
 const priceText = document.getElementById("priceText");
-
 const hiddenProduct = document.getElementById("selectedProduct");
 
 select.addEventListener("change", function() {
@@ -249,22 +252,20 @@ select.addEventListener("change", function() {
   if (this.value === "commander") {
     title.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
     priceText.innerText = "₹299";
-    donateInput.style.display = "none";
     hiddenProduct.value = "HcCommandeR";
   }
 
   if (this.value === "hcban") {
     title.innerHTML = '<i class="fas fa-shield-alt"></i> HcBan';
     priceText.innerText = "₹250";
-    donateInput.style.display = "none";
     hiddenProduct.value = "HcBan";
   }
 
   if (this.value === "donate") {
-  title.innerHTML = '<i class="fas fa-heart"></i> Donate';
-  priceText.innerText = "Enter Amount";
-  hiddenProduct.value = "Donate";
-}
+    title.innerHTML = '<i class="fas fa-heart"></i> Donate';
+    priceText.innerText = "Enter Amount";
+    hiddenProduct.value = "Donate";
+  }
 
 });
 
@@ -274,6 +275,7 @@ function copyUPI() {
   alert("UPI ID Copied!");
 }
 </script>
+
 
 </body>
 </html>
