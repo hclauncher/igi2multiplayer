@@ -98,7 +98,6 @@ const contactForm = document.querySelector('.contact-form');
 const formPopup = document.getElementById('form-popup');
 
 if (contactForm && formPopup) {
-
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -121,9 +120,7 @@ if (contactForm && formPopup) {
     try {
       const response = await fetch('/send', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
 
@@ -132,10 +129,7 @@ if (contactForm && formPopup) {
         formPopup.classList.add('show');
         contactForm.reset();
 
-        // Reset Turnstile widget (if available)
-        if (window.turnstile) {
-          turnstile.reset();
-        }
+        if (window.turnstile) turnstile.reset();
 
       } else {
         formPopup.textContent = "Failed to send message. Please verify captcha and try again.";
@@ -147,16 +141,65 @@ if (contactForm && formPopup) {
       formPopup.classList.add('show');
     }
 
-    // Restore button
     submitBtn.disabled = false;
     submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
 
-    setTimeout(() => {
-      formPopup.classList.remove('show');
-    }, 4000);
-
+    setTimeout(() => { formPopup.classList.remove('show'); }, 4000);
   });
 }
+
+
+// =============================
+// UPI Payment Form
+// =============================
+const upiForm = document.getElementById("upiForm");
+const statusMessage = document.getElementById("statusMessage");
+
+if (upiForm && statusMessage) {
+  upiForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const submitBtn = upiForm.querySelector("button");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Sending...";
+
+    const formData = new FormData(upiForm);
+
+    try {
+      const response = await fetch("/upi-payment", { method: "POST", body: formData });
+
+      if (response.ok) {
+        statusMessage.style.color = "#00ff00";
+        statusMessage.textContent = "Payment submitted successfully! Check your email for verification.";
+
+        // Reset form
+        upiForm.reset();
+
+        // Reset product selection to default
+        const productSelect = document.getElementById("productSelect");
+        productSelect.value = "commander";
+        document.getElementById("selectedProduct").value = "HcCommandeR - ₹299";
+        document.getElementById("productTitle").innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
+        document.getElementById("priceText").innerText = "₹299";
+
+      } else {
+        const text = await response.text();
+        statusMessage.style.color = "#ff5555";
+        statusMessage.textContent = "Error: " + text;
+      }
+
+    } catch (err) {
+      statusMessage.style.color = "#ff5555";
+      statusMessage.textContent = "Server error: " + err.message;
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Submit Payment";
+
+    setTimeout(() => { statusMessage.textContent = ""; }, 6000);
+  });
+}
+
 
 
 // Open new tab for all download links//
