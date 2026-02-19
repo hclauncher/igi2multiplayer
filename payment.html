@@ -271,6 +271,38 @@ input[type="number"] {
 <!-- Popup -->
 <div id="form-popup"></div>
 <script>
+// ===============================
+// PRODUCT SELECTION LOGIC
+// ===============================
+const productSelect = document.getElementById("productSelect");
+const productTitle = document.getElementById("productTitle");
+const priceText = document.getElementById("priceText");
+const hiddenProduct = document.getElementById("selectedProduct");
+
+productSelect.addEventListener("change", function () {
+  const value = this.value;
+
+  if (value === "commander") {
+    productTitle.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
+    priceText.innerText = "₹299";
+    hiddenProduct.value = "HcCommandeR";
+  } 
+  else if (value === "hcban") {
+    productTitle.innerHTML = '<i class="fas fa-shield-halved"></i> HcBan';
+    priceText.innerText = "₹250";
+    hiddenProduct.value = "HcBan";
+  } 
+  else if (value === "donate") {
+    productTitle.innerHTML = '<i class="fas fa-heart"></i> Donate';
+    priceText.innerText = "Custom Amount";
+    hiddenProduct.value = "Donate";
+  }
+});
+
+
+// ===============================
+// FORM SUBMISSION LOGIC
+// ===============================
 const form = document.getElementById("upiForm");
 const popup = document.getElementById("form-popup");
 const submitBtn = document.querySelector(".submit-btn");
@@ -294,6 +326,12 @@ form.addEventListener("submit", async function(e) {
     if (response.ok) {
       popup.innerText = "Payment submitted successfully! We will verify and contact you shortly.";
       form.reset();
+
+      // Reset product to default after submit
+      productSelect.value = "commander";
+      productTitle.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
+      priceText.innerText = "₹299";
+      hiddenProduct.value = "HcCommandeR";
     } else {
       popup.innerText = "Something went wrong. Please try again.";
       popup.classList.add("error");
@@ -314,6 +352,7 @@ form.addEventListener("submit", async function(e) {
   submitBtn.innerText = "Submit Payment";
 });
 </script>
+
 
 </body>
 </html>
