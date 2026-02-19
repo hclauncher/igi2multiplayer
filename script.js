@@ -157,7 +157,8 @@ const statusMessage = document.getElementById("statusMessage");
 
 if (upiForm && statusMessage) {
   upiForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    e.preventDefault();       // stop default form submission
+    e.stopPropagation();      // extra safety
 
     const submitBtn = upiForm.querySelector("button");
     submitBtn.disabled = true;
@@ -172,15 +173,18 @@ if (upiForm && statusMessage) {
         statusMessage.style.color = "#00ff00";
         statusMessage.textContent = "Payment submitted successfully! Check your email for verification.";
 
-        // Reset form
+        // Reset form & UI
         upiForm.reset();
-
-        // Reset product selection to default
         const productSelect = document.getElementById("productSelect");
         productSelect.value = "commander";
         document.getElementById("selectedProduct").value = "HcCommandeR - ₹299";
         document.getElementById("productTitle").innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
         document.getElementById("priceText").innerText = "₹299";
+
+        // Prevent browser from restoring previous form values on back
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, null, window.location.href);
+        }
 
       } else {
         const text = await response.text();
@@ -199,6 +203,7 @@ if (upiForm && statusMessage) {
     setTimeout(() => { statusMessage.textContent = ""; }, 6000);
   });
 }
+
 
 
 
