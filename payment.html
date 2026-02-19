@@ -7,7 +7,8 @@
  <!-- Favicon -->
   <link rel="icon" href="logo.webp" type="image/webp">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+<!-- Turnstile -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
 body {
   margin: 0;
@@ -239,7 +240,8 @@ input[type="number"] {
         <input type="text" name="name" placeholder="Your Name" required>
         <input type="email" name="email" placeholder="Your Email" required>
         <input type="text" name="txn" placeholder="Transaction ID" required>
-        <input type="file" name="screenshot" accept="image/*" required>
+        <input type="file" name="screenshot" accept=".jpg,.jpeg,.png" required>
+
 
         <!-- AGREEMENT CHECKBOX -->
         <div class="agreement-box">
@@ -252,7 +254,8 @@ input[type="number"] {
             and understand that all payments are final and non-refundable.
           </label>
         </div>
-
+<!-- TURNSTILE -->
+<div class="cf-turnstile" data-sitekey="0x4AAAAAACcg2TSb6eew6h6h"></div>
         <button type="submit" class="submit-btn">
           Submit Payment
         </button>
@@ -279,26 +282,54 @@ const productTitle = document.getElementById("productTitle");
 const priceText = document.getElementById("priceText");
 const hiddenProduct = document.getElementById("selectedProduct");
 
-productSelect.addEventListener("change", function () {
-  const value = this.value;
+if (productSelect) {
+  productSelect.addEventListener("change", function () {
+    const value = this.value;
 
-  if (value === "commander") {
-    productTitle.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
-    priceText.innerText = "₹299";
-    hiddenProduct.value = "HcCommandeR";
-  } 
-  else if (value === "hcban") {
-    productTitle.innerHTML = '<i class="fas fa-shield-halved"></i> HcBan';
-    priceText.innerText = "₹250";
-    hiddenProduct.value = "HcBan";
-  } 
-  else if (value === "donate") {
-    productTitle.innerHTML = '<i class="fas fa-heart"></i> Donate';
-    priceText.innerText = "Custom Amount";
-    hiddenProduct.value = "Donate";
-  }
-});
+    if (value === "commander") {
+      productTitle.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
+      priceText.innerText = "₹299";
+      hiddenProduct.value = "HcCommandeR";
+    } 
+    else if (value === "hcban") {
+      productTitle.innerHTML = '<i class="fas fa-shield-halved"></i> HcBan';
+      priceText.innerText = "₹250";
+      hiddenProduct.value = "HcBan";
+    } 
+    else if (value === "donate") {
+      productTitle.innerHTML = '<i class="fas fa-heart"></i> Donate';
+      priceText.innerText = "Custom Amount";
+      hiddenProduct.value = "Donate";
+    }
+  });
+}
 
+// ===============================
+// FILE VALIDATION (5MB + JPG/PNG)
+// ===============================
+const fileInput = document.querySelector('input[name="screenshot"]');
+
+if (fileInput) {
+  fileInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png"];
+    const maxSize = 1 * 1024 * 1024; // 1MB
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only JPG and PNG images are allowed.");
+      this.value = "";
+      return;
+    }
+
+    if (file.size > maxSize) {
+      alert("File size must be less than 1MB.");
+      this.value = "";
+      return;
+    }
+  });
+}
 
 // ===============================
 // FORM SUBMISSION LOGIC
@@ -307,52 +338,72 @@ const form = document.getElementById("upiForm");
 const popup = document.getElementById("form-popup");
 const submitBtn = document.querySelector(".submit-btn");
 
-form.addEventListener("submit", async function(e) {
-  e.preventDefault();
+if (form && popup && submitBtn) {
 
-  submitBtn.disabled = true;
-  submitBtn.innerText = "Submitting...";
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-  const formData = new FormData(form);
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
 
-  try {
-    const response = await fetch("/upi-payment", {
-      method: "POST",
-      body: formData
-    });
+    const formData = new FormData(form);
 
-    popup.classList.remove("error");
+    try {
+      const response = await fetch("/upi-payment", {
+        method: "POST",
+        body: formData
+      });
 
-    if (response.ok) {
-      popup.innerText = "Payment submitted successfully! We will verify and contact you shortly.";
-      form.reset();
+      popup.classList.remove("error");
 
-      // Reset product to default after submit
-      productSelect.value = "commander";
-      productTitle.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
-      priceText.innerText = "₹299";
-      hiddenProduct.value = "HcCommandeR";
-    } else {
-      popup.innerText = "Something went wrong. Please try again.";
+      if (response.ok) {
+        popup.innerText = "Payment submitted successfully! We will verify and contact you shortly.";
+        form.reset();
+
+        // Reset product to default after submit
+        if (productSelect) {
+          productSelect.value = "commander";
+          productTitle.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
+          priceText.innerText = "₹299";
+          hiddenProduct.value = "HcCommandeR";
+        }
+
+        // Reset Turnstile (if exists)
+        if (window.turnstile) {
+          turnstile.reset();
+        }
+
+      } else {
+        popup.innerText = "Something went wrong. Please try again.";
+        popup.classList.add("error");
+      }
+
+    } catch (error) {
+      popup.innerText = "Server error. Please try again.";
       popup.classList.add("error");
     }
 
-  } catch (error) {
-    popup.innerText = "Server error. Please try again.";
-    popup.classList.add("error");
-  }
+    popup.style.display = "block";
 
-  popup.style.display = "block";
+    setTimeout(() => {
+      popup.style.display = "none";
+    }, 4000);
 
-  setTimeout(() => {
-    popup.style.display = "none";
-  }, 4000);
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Submit Payment";
+  });
 
-  submitBtn.disabled = false;
-  submitBtn.innerText = "Submit Payment";
-});
- function copyUPI() {
-  const text = document.getElementById("upiText").innerText;
+}
+
+
+// ===============================
+// COPY UPI FUNCTION
+// ===============================
+function copyUPI() {
+  const upiElement = document.getElementById("upiText");
+  if (!upiElement) return;
+
+  const text = upiElement.innerText;
 
   navigator.clipboard.writeText(text)
     .then(() => {
@@ -365,6 +416,6 @@ form.addEventListener("submit", async function(e) {
 </script>
 
 
+
 </body>
 </html>
-
