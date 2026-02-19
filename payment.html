@@ -351,8 +351,20 @@ form.addEventListener("submit", async function(e) {
   submitBtn.disabled = false;
   submitBtn.innerText = "Submit Payment";
 });
+ function copyUPI() {
+  const text = document.getElementById("upiText").innerText;
+
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      alert("UPI ID Copied!");
+    })
+    .catch(() => {
+      alert("Failed to copy. Please copy manually.");
+    });
+}
 </script>
 
 
 </body>
 </html>
+
