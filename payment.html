@@ -268,49 +268,15 @@ input[type="number"] {
   </div>
 
 </div>
-
+<!-- Popup -->
+<div id="form-popup"></div>
 <script>
-const select = document.getElementById("productSelect");
-const title = document.getElementById("productTitle");
-const priceText = document.getElementById("priceText");
-const hiddenProduct = document.getElementById("selectedProduct");
-
-select.addEventListener("change", function() {
-
-  if (this.value === "commander") {
-    title.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
-    priceText.innerText = "₹299";
-    hiddenProduct.value = "HcCommandeR - ₹299";
-  }
-
-  if (this.value === "hcban") {
-    title.innerHTML = '<i class="fas fa-shield-alt"></i> HcBan';
-    priceText.innerText = "₹250";
-    hiddenProduct.value = "HcBan - ₹250";
-  }
-
-  if (this.value === "donate") {
-    title.innerHTML = '<i class="fas fa-heart"></i> Donate';
-    priceText.innerText = "Enter Amount";
-    hiddenProduct.value = "Donate";
-  }
-
-});
-
-function copyUPI() {
-  const text = document.getElementById("upiText").innerText;
-  navigator.clipboard.writeText(text);
-  alert("UPI ID Copied!");
-}
-
-
-/* ===== FORM SUBMIT (Like Contact Page) ===== */
 const form = document.getElementById("upiForm");
 const popup = document.getElementById("form-popup");
 const submitBtn = document.querySelector(".submit-btn");
 
 form.addEventListener("submit", async function(e) {
-  e.preventDefault(); // stop reload
+  e.preventDefault();
 
   submitBtn.disabled = true;
   submitBtn.innerText = "Submitting...";
@@ -323,14 +289,13 @@ form.addEventListener("submit", async function(e) {
       body: formData
     });
 
-    const text = await response.text();
     popup.classList.remove("error");
 
     if (response.ok) {
       popup.innerText = "Payment submitted successfully! We will verify and contact you shortly.";
       form.reset();
     } else {
-      popup.innerText = text;
+      popup.innerText = "Something went wrong. Please try again.";
       popup.classList.add("error");
     }
 
@@ -349,11 +314,6 @@ form.addEventListener("submit", async function(e) {
   submitBtn.innerText = "Submit Payment";
 });
 </script>
-
-
-<!-- Popup -->
-<div id="form-popup"></div>
-
 
 </body>
 </html>
