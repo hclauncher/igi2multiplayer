@@ -12,7 +12,14 @@ export async function onRequestPost(context) {
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const base64File = Buffer.from(arrayBuffer).toString("base64");
+    const bytes = new Uint8Array(arrayBuffer);
+
+    let binary = "";
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+
+    const base64File = btoa(binary);
 
     const BREVO_API_KEY = context.env.BREVO_API_KEY;
 
