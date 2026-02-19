@@ -3,81 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UPI Payment - Homecoming Gaming</title>
-
+<title>HcCommanDeR - Payment</title>
+ <!-- Favicon -->
+  <link rel="icon" href="logo.webp" type="image/webp">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #000428, #004e92);
-  color: white;
+  background: #000;
+  color: #00ffff;
   display: flex;
   justify-content: center;
-  align-items: center;
   min-height: 100vh;
+  padding: 30px 20px;
+  box-sizing: border-box;
 }
 
-.container {
-  background: rgba(0,0,0,0.8);
-  padding: 30px;
+.payment-container {
+  background: rgba(0,0,0,0.95);
+  border: 1px solid #00ffff50;
+  box-shadow: 0 0 40px #00ffff30;
   border-radius: 15px;
+  padding: 35px;
   width: 100%;
-  max-width: 450px;
-  box-shadow: 0 0 25px #00ffff;
+  max-width: 950px;
+  margin: auto;
 }
 
-h2 {
+h1 {
   text-align: center;
+  text-shadow: 0 0 15px #00ffff;
   margin-bottom: 10px;
 }
 
 .price {
   text-align: center;
-  font-size: 18px;
-  margin-bottom: 20px;
+  font-size: 2em;
+  font-weight: bold;
+  margin: 10px 0 5px;
+}
+
+.no-refund {
+  text-align: center;
+  font-size: 0.85em;
+  color: #00ffffaa;
+  margin-bottom: 15px;
+}
+
+.product-select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #00ffff50;
+  background: #050505;
   color: #00ffff;
 }
 
-select, input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 6px;
+.payment-content {
+  display: flex;
+  gap: 40px;
+  margin-top: 5px;
+  align-items: flex-start;
+}
+
+.left-side {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-box img {
+  width: 220px;
+  border-radius: 10px;
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 20px #00ffff50;
+}
+
+.upi-id {
+  margin-top: 15px;
+  font-size: 1.2em;
+  background: #0a0a0a;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #00ffff50;
+}
+
+.copy-btn {
+  margin-top: 10px;
+  padding: 8px 15px;
+  background: #00ffff;
+  color: #000;
   border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.instructions {
+  margin-top: 15px;
+  font-size: 0.95em;
+  color: #00ffffcc;
+}
+
+.right-side {
+  flex: 1;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="file"],
+input[type="number"] {
+  background: #050505;
+  border: 1px solid #00ffff50;
+  color: #00ffff;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  margin-bottom: 15px;
+  box-sizing: border-box;
 }
 
 .submit-btn {
-  width: 100%;
   padding: 12px;
   background: #00ffff;
+  color: #000;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  width: 100%;
 }
 
-.submit-btn:disabled {
-  background: gray;
-  cursor: not-allowed;
-}
-
-.upi-box {
+.note {
+  margin-top: 25px;
   text-align: center;
+  font-size: 0.9em;
+  color: #00ffffaa;
+}
+
+.agreement-box {
   margin-bottom: 15px;
+  font-size: 0.9em;
 }
 
-.upi-box button {
-  padding: 6px 12px;
-  background: #00ffff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
+.agreement-box a {
+  color: #00ffff;
+  text-decoration: underline;
 }
 
-/* ===== POPUP ===== */
+@media (max-width: 768px) {
+  .payment-content {
+    flex-direction: column;
+  }
+}
+/* ===== POPUP (Same as contact page) ===== */
 #form-popup {
   display: none;
   position: fixed;
@@ -104,41 +188,86 @@ select, input {
   90% { opacity: 1; }
   100% { opacity: 0; transform: translateY(20px); }
 }
+
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="payment-container">
 
-<h2 id="productTitle"><i class="fas fa-bolt"></i> HcCommandeR</h2>
-<div class="price" id="priceText">₹299</div>
+  <h1 id="productTitle"><i class="fas fa-bolt"></i> HcCommandeR</h1>
+  <div class="price" id="priceText">₹299</div>
+  <div class="no-refund">
+    Digital product. All payments are final and non-refundable.
+  </div>
 
-<select id="productSelect">
-  <option value="commander">HcCommandeR - ₹299</option>
-  <option value="hcban">HcBan - ₹250</option>
-  <option value="donate">Donate</option>
-</select>
+  <select class="product-select" id="productSelect">
+    <option value="commander">HcCommandeR - ₹299</option>
+    <option value="hcban">HcBan - ₹250</option>
+    <option value="donate">Donate</option>
+  </select>
 
-<div class="upi-box">
-  <p id="upiText">igi2.homecoming@upi</p>
-  <button onclick="copyUPI()">Copy UPI</button>
+  <div class="payment-content">
+
+    <div class="left-side">
+      <div class="qr-box">
+        <img src="images/upi.png" alt="UPI QR Code">
+      </div>
+
+      <div class="upi-id">
+        UPI ID: <strong id="upiText">8116542482@apl</strong><br>
+        <button type="button" class="copy-btn" onclick="copyUPI()">Copy UPI ID</button>
+      </div>
+
+      <div class="instructions">
+        🇮🇳 Scan QR → Pay → Upload screenshot<br>
+        Fake or invalid payments will result in permanent blacklist.
+      </div>
+    </div>
+
+    <div class="right-side">
+      <form id="upiForm"
+      method="POST"
+      action="/upi-payment"
+      enctype="multipart/form-data">
+
+
+        
+        <input type="hidden" name="product" id="selectedProduct" value="HcCommandeR">
+
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <input type="text" name="txn" placeholder="Transaction ID" required>
+        <input type="file" name="screenshot" accept="image/*" required>
+
+        <!-- AGREEMENT CHECKBOX -->
+        <div class="agreement-box">
+          <label>
+            <input type="checkbox" id="agreeCheck" required>
+            I agree to the 
+            <a href="agreement.html" target="_blank">
+              Software License & Sales Agreement
+            </a>
+            and understand that all payments are final and non-refundable.
+          </label>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          Submit Payment
+        </button>
+
+        <p id="statusMessage"></p>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="note">
+    After verification, you will receive the download link within 10–30 minutes via your email.
+  </div>
+
 </div>
-
-<form id="upiForm" enctype="multipart/form-data">
-  <input type="hidden" name="product" id="selectedProduct" value="HcCommandeR - ₹299">
-
-  <input type="text" name="name" placeholder="Your Name" required>
-  <input type="text" name="transactionId" placeholder="Transaction ID" required>
-  <input type="file" name="screenshot" accept="image/*" required>
-
-  <button type="submit" class="submit-btn">Submit Payment</button>
-</form>
-
-</div>
-
-<!-- Popup -->
-<div id="form-popup"></div>
 
 <script>
 const select = document.getElementById("productSelect");
@@ -174,13 +303,14 @@ function copyUPI() {
   alert("UPI ID Copied!");
 }
 
-/* ===== FORM SUBMIT ===== */
+
+/* ===== FORM SUBMIT (Like Contact Page) ===== */
 const form = document.getElementById("upiForm");
 const popup = document.getElementById("form-popup");
 const submitBtn = document.querySelector(".submit-btn");
 
 form.addEventListener("submit", async function(e) {
-  e.preventDefault();
+  e.preventDefault(); // stop reload
 
   submitBtn.disabled = true;
   submitBtn.innerText = "Submitting...";
@@ -219,6 +349,11 @@ form.addEventListener("submit", async function(e) {
   submitBtn.innerText = "Submit Payment";
 });
 </script>
+
+
+<!-- Popup -->
+<div id="form-popup"></div>
+
 
 </body>
 </html>
