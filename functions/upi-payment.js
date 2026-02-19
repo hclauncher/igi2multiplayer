@@ -92,9 +92,9 @@ export async function onRequestPost(context) {
         to: [{
           email: "igi2.homecoming@gmail.com"
         }],
-        subject: `New UPI Payment - ${product}`,
+        subject: `UPI Payment - ${product}`,
         htmlContent: `
-          <h3>New UPI Payment</h3>
+          <h3>UPI Payment Details</h3>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Tools:</strong> ${product}</p>
