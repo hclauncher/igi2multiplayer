@@ -252,19 +252,19 @@ select.addEventListener("change", function() {
   if (this.value === "commander") {
     title.innerHTML = '<i class="fas fa-bolt"></i> HcCommandeR';
     priceText.innerText = "₹299";
-    hiddenProduct.value = "HcCommandeR";
+    hiddenProduct.value = "HcCommandeR - ₹299";  // include price
   }
 
   if (this.value === "hcban") {
     title.innerHTML = '<i class="fas fa-shield-alt"></i> HcBan';
     priceText.innerText = "₹250";
-    hiddenProduct.value = "HcBan";
+    hiddenProduct.value = "HcBan - ₹250";  // include price
   }
 
   if (this.value === "donate") {
     title.innerHTML = '<i class="fas fa-heart"></i> Donate';
     priceText.innerText = "Enter Amount";
-    hiddenProduct.value = "Donate";
+    hiddenProduct.value = "Donate";  // keep as is
   }
 
 });
@@ -275,6 +275,7 @@ function copyUPI() {
   alert("UPI ID Copied!");
 }
 </script>
+
 
 
 </body>
